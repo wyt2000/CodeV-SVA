@@ -10,7 +10,7 @@ pip install -e .
 
 ## Usage
 
-```python
+```bash
 python -m SVAClient.cli.main \
     --task $TASK \
     --config $CONFIG_PATH

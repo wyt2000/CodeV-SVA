@@ -10,7 +10,7 @@ pip install -e .
 
 ## Usage
 
-```python
+```bash
 python -m llmkit_data.cli.serve \
     --config $CONFIG_PATH \
     --log-dir $SERVER_LOG_DIR
