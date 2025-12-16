@@ -1,0 +1,68 @@
+# global 
+random_seed: 0
+
+# agent 
+agent:
+  problem:
+    path: TODO
+    num_samples: 128
+    batch_size: 244
+
+  verification:
+    path: TODO
+    max_workers: 64
+    batch_size: 16 
+    timeout: 600
+
+  generation:
+    path: TODO
+    max_workers: 1 
+    batch_size: 1
+    timeout: 2000
+    models:
+      - TODO
+
+    generate:
+      query:
+        model: *action_model
+        temperature: 1.0
+        top_p: 0.95
+        max_tokens: 2048 
+        stop: ["```"]
+        use_system_prompt: False
+        timeout: 1000
+
+# vllm server
+llm_kit:
+  host: 0.0.0.0
+  router_port: 4242
+  router_timeout: 1200
+  api_key: token-vllm-server
+
+  models:
+    - model: *action_model
+      tensor_parallel_size: 1
+      pipeline_parallel_size: 1
+      data_parallel_size: 4
+      random_seeds:
+        - 0
+        - 0
+        - 0
+        - 0
+
+      vllm:
+        max_model_len: 4096
+        dtype: auto
+
+    - model: *planning_model
+      tensor_parallel_size: 4
+      pipeline_parallel_size: 1
+      data_parallel_size: 1
+      random_seeds:
+        - 0
+
+      vllm:
+        max_model_len: 4096
+        gpu_memory_utilization: 1.0
+        dtype: auto
+
