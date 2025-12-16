@@ -34,18 +34,14 @@ or removing erroneous tests (see `SVAClient/datasets`). The evaluation results a
 | Model                 |             | NL2SVA-Human |             |      |             | NL2SVA-Machine |             |
 | :-------------------- | :---------: | :----------: | :---------: | ---- | :---------: | :------------: | :---------: |
 |                       |   Func.@1   |   Func.@16   |  Func.@32   |      |   Func.@1   |    Func.@16    |  Func.@32   |
-|                       |             |              |             |      |             |                |             |
 | DeepSeek-R1-671B      | <u>74.6</u> |   **90.3**   | <u>90.4</u> |      |    81.0     |      93.3      |    94.3     |
 | GPT-5                 |    71.8     | <u>90.2</u>  |  **92.7**   |      |    81.8     |      93.2      |    94.3     |
 | DeepSeek-V3.1-671B    |    63.1     |     81.4     |    84.9     |      | <u>83.8</u> |      92.9      |    93.6     |
 | GPT-4o                |    64.1     |     75.2     |    78.1     |      |    68.5     |      81.3      |    83.7     |
-|                       |             |              |             |      |             |                |             |
 | RTLCoder-DS-v1.1-6.7B |    25.9     |     58.8     |    65.8     |      |    21.7     |      54.8      |    60.8     |
 | CodeV-R1-Qwen-7B      |    25.2     |     55.8     |    61.6     |      |    37.4     |      76.6      |    83.0     |
-|                       |             |              |             |      |             |                |             |
 | Qwen3-8B              |    32.3     |     71.6     |    74.0     |      |    46.1     |      88.0      |    90.5     |
 | Qwen3-14B             |    61.6     |     86.1     |    87.7     |      |    75.3     |      92.7      |    94.3     |
-|                       |             |              |             |      |             |                |             |
 | SVACoder-no-think-8B  |    65.8     |     84.4     |    86.3     |      |    78.7     |      90.9      |    91.9     |
 | SVACoder-8B           |    72.0     |     88.8     | <u>90.4</u> |      |    83.5     |    **96.3**    |  **97.2**   |
 | SVACoder-14B          |  **75.8**   |     89.4     | <u>90.4</u> |      |  **84.0**   |  <u>94.9</u>   | <u>95.8</u> |
@@ -64,9 +60,9 @@ pip install -e SVAClient
 pip install -e llm-kit-data
 ```
 
-3. Start the HTTP server for formal verification (see `SVAServer/README.md`).
+3. Setup the HTTP server for formal verification (see `SVAServer/README.md`).
 
-4. Start the modified vLLM server for the high-efficiency inference of CodeV-SVA.
+4. Setup the modified vLLM server for the high-efficiency inference of CodeV-SVA.
 
 ```bash
 cd SVAClient
