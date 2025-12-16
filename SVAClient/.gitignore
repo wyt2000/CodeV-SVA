@@ -1,15 +1,14 @@
 ret_one/
 vllm_server_output/
-results
 *.txt
 *.png
-datasets
 !requirements.txt
 src/SVAClient.egg-info/
 src/SVAClient/__pycache__/
 src/SVAClient/cli/__pycache__/
 training_datasets
 config_records
+results
 *.pdf
 trainer_log
 output.txt
