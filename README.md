@@ -1,8 +1,9 @@
 # CodeV-SVA: Training Specialized LLMs for Hardware Assertion Generation via RTL-Grounded Bidirectional Data Synthesis
 
-<div align="center">
-  <img src="https://img.shields.io/static/v1?label=Model&message=Available&color=yellow" alt="Model available"> &ensp;
-  <img src="https://img.shields.io/static/v1?label=Code&message=Open%20Source&color=blue" alt="Open-source code">
+<div align="center"> 
+  <a href="https://huggingface.co/wyt2000/CodeV-SVA-14B"><img src="https://img.shields.io/static/v1?label=Model&message=HuggingFace&color=yellow"></a> &ensp;
+  <a href="https://huggingface.co/datasets/wyt2000/CodeV-SVA-datasets"><img src="https://img.shields.io/static/v1?label=Dataset&message=HuggingFace&color=Red"></a> &ensp;
+  <a href="https://github.com/wyt2000/CodeV-SVA"><img src="https://img.shields.io/static/v1?label=Code&message=Github&color=blue"></a> &ensp;
 </div>
 
 ## Introduction
