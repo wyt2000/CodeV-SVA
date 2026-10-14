@@ -1,0 +1,39 @@
+# global 
+random_seed: 0
+use_cache: True
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: training_datasets/CodeV-SVA-dataset-83K.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model qwen3.6-plus
+
+  generation:
+    path: training_datasets/CodeV-SVA-dataset-83K-Qwen3p6-sva2nl.jsonl
+    max_workers: 1024
+    batch_size: 1 
+    timeout: 3600
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0.8
+        top_p: 0.95
+        max_tokens: 65536
+        # stop: []
+        use_system_prompt: False
+        use_chat: True
+        enable_thinking: True
+        timeout: 3600
+  
+# LLM server
+llm_kit:
+  server_type: openai_api
+  url: https://api.example.com/v1
+

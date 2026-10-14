@@ -1,0 +1,36 @@
+# global 
+random_seed: 0
+use_cache: False
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: datasets/Wave2SVA-Benchmark-V1.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model deepseek-v3.2
+
+  generation:
+    path: datasets/Wave2SVA-Benchmark-V1-en.jsonl
+    max_workers: 1
+    batch_size: 1 
+    timeout: 2000000
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0
+        top_p: 1.0 
+        max_tokens: 32768
+        use_system_prompt: False
+        use_chat: True
+        timeout: 2000000
+  
+# LLM server
+llm_kit:
+  server_type: openai_api
+  url: https://aigc.x-see.cn/v1

@@ -1,0 +1,24 @@
+MODEL_NAME=$1
+MAX_TOKENS=$2
+NUM_SAMPLES=$3
+
+PROBLEM_NAME="nl2sva_machine"
+TEMPLATE_PATH="configs/${PROBLEM_NAME}_template_pass_at_k.yaml"
+RESULT_NAME="${PROBLEM_NAME}_${MODEL_NAME}_pass_at_k"
+CONFIG_PATH="config_records/${RESULT_NAME}.yaml"
+GENERATION_PATH="results/${RESULT_NAME}_generation.jsonl"
+VERIFICATION_PATH="results/${RESULT_NAME}_verification.jsonl"
+
+mkdir -p config_records
+
+python -m SVAClient.cli.add_config \
+  --template-path $TEMPLATE_PATH \
+  --save-path $CONFIG_PATH  \
+  --model-path $MODEL_NAME \
+  --generation-path $GENERATION_PATH \
+  --verification-path $VERIFICATION_PATH \
+  --max-tokens $MAX_TOKENS \
+  --num-samples $NUM_SAMPLES
+
+python -m SVAClient.cli.main --task nl2sva_machine --config $CONFIG_PATH
+python ../Scripts/nl2sva_pass_at_k.py --result-path $VERIFICATION_PATH --n $NUM_SAMPLES

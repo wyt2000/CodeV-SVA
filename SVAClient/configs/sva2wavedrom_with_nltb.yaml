@@ -1,0 +1,53 @@
+# global 
+random_seed: 0
+use_cache: True
+verify_only: True
+
+# agent 
+agent:
+  problem:
+    # path: training_datasets/CodeV-SVA-dataset-83K.jsonl
+    path: training_datasets/CodeV-SVA-dataset-83K-sva2wavedrom-qwen3p6-plus.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model qwen3.6-plus
+
+  generation:
+    path: training_datasets/CodeV-SVA-dataset-83K-sva2wavedrom-qwen3p6-plus.jsonl
+    max_workers: 1024
+    batch_size: 1 
+    timeout: 300
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0
+        top_p: 1.0
+        max_tokens: 65536
+        use_system_prompt: False
+        use_chat: True
+        enable_thinking: True
+        timeout: 3600
+
+  verification:
+    path: training_datasets/CodeV-SVA-dataset-83K-sva2wavedrom-qwen3p6-plus-diagram.jsonl
+    max_workers: 64
+    batch_size: 1
+    timeout: 600
+
+# Verifier
+verifier:
+  host: 127.0.0.1
+  port: 4422
+  max_workers: 128
+  queue_max_size: 1024
+  memory_limit: 10
+  time_limit: 180
+
+# LLM server
+llm_kit:
+  server_type: openai_api
+  url: https://api.example.com/v1

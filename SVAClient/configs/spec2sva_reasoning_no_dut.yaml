@@ -1,0 +1,39 @@
+# global 
+random_seed: 0
+use_cache: True
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: training_datasets/CodeV-SVA-83K-sva2nl.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model ep-20251031003805-f9mrq
+
+  generation:
+    path: training_datasets/CodeV-SVA-83K-sva2nl-spec2sva.jsonl
+    max_workers: 2048 
+    batch_size: 1 
+    timeout: 600
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0
+        top_p: 1.0
+        max_tokens: 32768
+        # stop: []
+        use_system_prompt: True
+        use_chat: True
+        system_prompt: "You are an AI assistant tasked with formal verification of register transfer level (RTL) designs.\nYour job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.\n"
+        timeout: 600
+  
+# LLM server
+llm_kit:
+  server_type: ark_api
+  url: https://ark.cn-beijing.volces.com/api/v3
+

@@ -1,0 +1,37 @@
+# global 
+random_seed: 0
+use_cache: False 
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: training_datasets/case_study.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model deepseek-v3.1
+
+  generation:
+    path: training_datasets/case_study_orm.jsonl
+    max_workers: 64 
+    batch_size: 1 
+    timeout: 2000000
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0.8
+        top_p: 0.95
+        max_tokens: 16384
+        use_system_prompt: False
+        use_chat: True
+        timeout: 2000000
+  
+# LLM server
+llm_kit:
+  server_type: openai_api
+  url: https://aigc.x-see.cn/v1
+

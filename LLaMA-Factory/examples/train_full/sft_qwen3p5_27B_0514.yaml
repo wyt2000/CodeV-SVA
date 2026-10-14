@@ -1,0 +1,43 @@
+### model
+model_name_or_path: Qwen/Qwen3.5-27B
+trust_remote_code: true
+# flash_attn: fa2
+
+### method
+stage: sft
+do_train: true
+finetuning_type: full
+deepspeed: examples/deepspeed/ds_z3_offload_no_pin_config.json
+
+### dataset
+dataset: CodeV-SVA-dataset-83K-sva2wavedrom-qwen3p6-plus-diagram-wave2sva-self-verified-pass-training
+template: qwen3_5
+cutoff_len: 65000
+preprocessing_num_workers: 64
+dataloader_num_workers: 4
+packing: true
+
+### output
+output_dir: saves/CodeV-SVA-Qwen35-27B
+logging_steps: 1
+save_steps: 500
+plot_loss: true
+overwrite_output_dir: false
+save_only_model: false
+report_to: wandb  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+run_name: CodeV-SVA-Qwen35-27B-0514
+save_total_limit: 1
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 1
+learning_rate: 2.0e-5
+num_train_epochs: 2.0
+lr_scheduler_type: cosine
+warmup_steps: 20
+bf16: true
+ddp_timeout: 180000000
+seed: 42
+optim: adamw_torch
+enable_liger_kernel: True
+use_unsloth_gc: False

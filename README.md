@@ -1,0 +1,152 @@
+# CodeV-SVA: Training Specialized LLMs for Hardware Assertion Generation via RTL-Grounded Bidirectional Data Synthesis
+
+<div align="center">
+  <img src="https://img.shields.io/static/v1?label=Model&message=Available&color=yellow" alt="Model available"> &ensp;
+  <img src="https://img.shields.io/static/v1?label=Code&message=Open%20Source&color=blue" alt="Open-source code">
+</div>
+
+## Introduction
+
+CodeV-SVA is a family of large language models designed to translate natural-language verification properties into SystemVerilog Assertions (SVAs). This repository provides the model-training framework, evaluation client, formal-verification server, data utilities, and metric scripts required for the complete CodeV-SVA workflow.
+
+Open-source plan:
+
+- Model ✓
+- Evaluation code ✓
+- Paper ✓
+- Dataset ✓
+- Data synthesis and training code ✓
+
+## Repository structure
+
+| Directory | Description |
+| --- | --- |
+| `LLaMA-Factory/` | Model training and fine-tuning framework. It contains training configurations, dataset registration, distributed training scripts, Docker files, and tests. CodeV-SVA training examples are under `examples/train_full/`, and cluster job examples are under `slurm/`. |
+| `SVAClient/` | Client-side SVA workflows. It builds prompts, queries local or remote language models, requests formal verification, caches results, and runs tasks such as NL2SVA and Wave2SVA. |
+| `SVAServer/` | HTTP formal-verification service. It wraps JasperGold-based flows and exposes syntax, equivalence, coverage, and testbench verification endpoints. |
+| `Scripts/` | Standalone evaluation utilities, including the `Func.@k`/pass@k metric script. |
+
+See the README and configuration files inside each component for more detailed usage.
+
+## Models
+
+Model weights are distributed separately and are not bundled with this source tree.
+
+| Model | Availability |
+| --- | --- |
+| CodeV-SVA-8B | External model release |
+| CodeV-SVA-no-think-8B | External model release |
+| CodeV-SVA-14B | External model release |
+
+## Evaluation results
+
+We employ human experts to recheck the [FVEval](https://github.com/NVlabs/FVEval) benchmark, correcting or removing erroneous tests. The reviewed datasets are under `SVAClient/datasets`. The evaluation results are shown below:
+
+| Model | NL2SVA-Human Func.@1 | NL2SVA-Human Func.@16 | NL2SVA-Human Func.@32 | NL2SVA-Machine Func.@1 | NL2SVA-Machine Func.@16 | NL2SVA-Machine Func.@32 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| DeepSeek-R1-671B | <u>74.6</u> | **90.3** | <u>90.4</u> | 81.0 | 93.3 | 94.3 |
+| GPT-5 | 71.8 | <u>90.2</u> | **92.7** | 81.8 | 93.2 | 94.3 |
+| DeepSeek-V3.1-671B | 63.1 | 81.4 | 84.9 | <u>83.8</u> | 92.9 | 93.6 |
+| GPT-4o | 64.1 | 75.2 | 78.1 | 68.5 | 81.3 | 83.7 |
+| RTLCoder-DS-v1.1-6.7B | 25.9 | 58.8 | 65.8 | 21.7 | 54.8 | 60.8 |
+| CodeV-R1-Qwen-7B | 25.2 | 55.8 | 61.6 | 37.4 | 76.6 | 83.0 |
+| Qwen3-8B | 32.3 | 71.6 | 74.0 | 46.1 | 88.0 | 90.5 |
+| Qwen3-14B | 61.6 | 86.1 | 87.7 | 75.3 | 92.7 | 94.3 |
+| SVACoder-no-think-8B | 65.8 | 84.4 | 86.3 | 78.7 | 90.9 | 91.9 |
+| SVACoder-8B | 72.0 | 88.8 | <u>90.4</u> | 83.5 | **96.3** | **97.2** |
+| SVACoder-14B | **75.8** | 89.4 | <u>90.4</u> | **84.0** | <u>94.9</u> | <u>95.8</u> |
+
+## Reproduction
+
+Python 3.11 and an isolated virtual environment are recommended. The training and evaluation stacks have different dependency sets, so installing them separately is usually easier.
+
+### Evaluation
+
+1. Install Cadence JasperGold 2023.12 and confirm that the `jg` command is available.
+
+2. Install the required Python dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -e ./SVAClient
+pip install -e ./llm-kit-data
+pip install -r ./SVAServer/requirements.txt
+```
+
+3. Start the formal-verification HTTP server. See `SVAServer/README.md` for details.
+
+```bash
+cd SVAServer
+bash start_server.sh
+```
+
+4. Start the modified vLLM server for high-efficiency CodeV-SVA inference:
+
+```bash
+cd SVAClient
+bash eval_local/start_vllm_server.sh
+```
+
+5. Use `SVAClient` for SVA generation and verification:
+
+```bash
+cd SVAClient
+python -m SVAClient.cli.main \
+  --task nl2sva_human \
+  --config configs/nl2sva_human_local_template_pass_at_k.yaml
+```
+
+Available evaluation tasks include `nl2sva_human`, `nl2sva_machine`, and `nl2sva_human_no_rtl`. The verification server can run on a CPU-only machine, while model inference can run on GPU machines. The examples under `SVAClient/eval_local/` include Slurm and SSH-forwarding workflows that should be adapted to the local environment.
+
+6. Compute the `Func.@k` metric:
+
+```bash
+python Scripts/nl2sva_pass_at_k.py \
+  --result-path "$VERIFICATION_PATH" \
+  --n "$NUM_SAMPLES"
+```
+
+### Model training
+
+Install the training environment:
+
+```bash
+cd LLaMA-Factory
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt \
+  --extra-index-url https://download.pytorch.org/whl/cu128 \
+  --index-strategy unsafe-best-match
+uv pip install -e .
+```
+
+Place training data under `LLaMA-Factory/data/` and register it in the dataset configuration. A training example can then be launched with:
+
+```bash
+llamafactory-cli train examples/train_full/sft_qwen3p5_9B_0407.yaml
+```
+
+For multi-node or scheduled training, adapt the examples under `LLaMA-Factory/slurm/` to the local scheduler, CUDA environment, model location, and storage layout.
+
+## Configuration and security
+
+- The repository does not store real API keys, access tokens, personal repository URLs, or personal machine paths.
+- The `api_key` fields under `SVAClient/configs/` are empty by default. Inject credentials through a private local configuration and do not commit them.
+- `MODEL_PATH`, `MODEL_ROOT`, `WAVE2SVA_IMAGE_ROOT`, `CUDA_ENV_SCRIPT`, and `LLAMA_FACTORY_ROOT` can override paths used by the example scripts.
+- Datasets, model weights, runtime logs, and formal-tool licenses must be supplied separately.
+
+## Citation
+
+```bibtex
+@misc{CodeV-SVA,
+  title        = {CodeV-SVA: Training Specialized LLMs for Hardware Assertion Generation via RTL-Grounded Bidirectional Data Synthesis},
+  author       = {CodeV-SVA Team},
+  year         = {2025}
+}
+```
+
+## Licenses
+
+The components may use different licenses. Review the `LICENSE` file and third-party notices in each directory before use or redistribution.

@@ -1,0 +1,38 @@
+# global 
+random_seed: 0
+use_cache: True
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: training_datasets/codev-with-testbench-seq-42K.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model gpt-5-2025-08-07
+
+  generation:
+    path: training_datasets/gpt5-codev-with-testbench-seq-42K-spec.jsonl
+    max_workers: 2048
+    batch_size: 1 
+    timeout: 600
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0.8
+        top_p: 0.95
+        max_tokens: 32768
+        # stop: []
+        use_system_prompt: False
+        use_chat: True
+        # system_prompt: "You are an AI assistant tasked with formal verification of register transfer level (RTL) designs.\nYour job is to generate a SystemVerilog assertion for the design-under-test provided.\n"
+        timeout: 600
+  
+# LLM server
+llm_kit:
+  server_type: openai_api
+  url: https://aigc.x-see.cn/v1

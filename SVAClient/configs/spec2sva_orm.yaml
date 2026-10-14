@@ -1,0 +1,36 @@
+# global 
+random_seed: 0
+use_cache: True
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: training_datasets/codev-159K-pass-at-5-Qwen-7B-checked-no-all-pass-regenerated-R1-verification-failed-verified-pass-noreset.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model ep-20250925035746-ghz7r
+
+  generation:
+    path: training_datasets/codev-159K-pass-at-5-Qwen-7B-checked-no-all-pass-regenerated-R1-verification-failed-verified-pass-noreset-orm-judgement.jsonl
+    max_workers: 2048
+    batch_size: 1 
+    timeout: 2000000
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0
+        top_p: 1.0
+        max_tokens: 16384
+        use_system_prompt: False
+        use_chat: True
+        timeout: 2000000
+  
+# LLM server
+llm_kit:
+  server_type: ark_api
+  url: https://ark.cn-beijing.volces.com/api/v3

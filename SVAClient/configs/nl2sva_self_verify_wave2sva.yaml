@@ -1,0 +1,26 @@
+# global 
+random_seed: 0
+use_cache: False 
+verify_only: True
+
+# agent 
+agent:
+  problem:
+    path: datasets/Wave2SVA-Benchmark-V4-en.jsonl
+    num_samples: 1
+    batch_size: -1
+
+  verification:
+    path: datasets/Wave2SVA-Benchmark-V4-en-self-verified.jsonl
+    max_workers: 64
+    batch_size: 1
+    timeout: 600
+
+# Verifier
+verifier:
+  host: 127.0.0.1
+  port: 4422
+  max_workers: 128
+  queue_max_size: 1024
+  memory_limit: 10
+  time_limit: 180

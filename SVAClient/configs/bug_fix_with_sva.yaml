@@ -1,0 +1,54 @@
+# global 
+random_seed: 0
+use_cache: True 
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: results/fpu_bug_localization_with_ios_with_gt_io2sva_verification_localization_generation_ctwf.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model deepseek-v3.2
+
+  generation:
+    path: results/fpu_bug_localization_with_ios_with_gt_io2sva_verification_localization_generation_ctwf_fix.jsonl
+    max_workers: 1024
+    batch_size: 1 
+    timeout: 2000000
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0 
+        top_p: 1.0
+        max_tokens: 81920
+        use_system_prompt: False
+        use_chat: True
+        enable_thinking: True
+        timeout: 2000000
+  
+  verification:
+    path: results/fpu_bug_localization_verification.jsonl
+    max_workers: 128
+    batch_size: 1
+    timeout: 600
+
+
+# Verifier
+verifier:
+  host: 127.0.0.1
+  port: 4422
+  max_workers: 128
+  queue_max_size: 1024
+  memory_limit: 10
+  time_limit: 180
+
+# LLM server
+llm_kit:
+  server_type: openai_api
+  url: https://aigc.x-see.cn/v1
+

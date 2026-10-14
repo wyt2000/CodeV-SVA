@@ -1,0 +1,61 @@
+# global 
+random_seed: 0
+use_cache: False 
+generate_only: True
+
+# agent 
+agent:
+  problem:
+    path: results/nl2sva_human_deepseek-v3.1_pass_at_16_verification_group_by_string_match.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model TODO
+
+  generation:
+    path: TODO
+    max_workers: 32
+    batch_size: 1 
+    timeout: 2000000
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        tokenizer_path: *action_model
+        temperature: 0
+        top_p: 1.0
+        max_tokens: TODO
+        # stop: []
+        use_system_prompt: False
+        use_chat: True
+        timeout: 2000000
+ 
+# vllm server
+llm_kit:
+  server_type: vllm 
+  host: 127.0.0.1
+  router_port: 2244
+  router_timeout: 1000000
+  api_key: ""
+
+  models:
+    - model: *action_model
+      tensor_parallel_size: 1
+      pipeline_parallel_size: 1
+      data_parallel_size: 8
+      random_seeds:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+
+      vllm:
+        max_model_len: 40960
+        dtype: auto
+

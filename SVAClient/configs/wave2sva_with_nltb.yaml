@@ -1,0 +1,57 @@
+# global 
+random_seed: 0
+use_cache: false
+generate_only: true
+
+# agent 
+agent:
+  problem:
+    path: datasets/Wave2SVA-Benchmark-V4-en.jsonl
+    num_samples: 32 
+    batch_size: -1
+    models:
+        - sva : &action_model kimi/kimi-k3
+
+  generation:
+    path: results/wave2sva-benchmark-v4-kimi-k3-pass-at-32.jsonl
+    max_workers: 256
+    batch_size: 1 
+    timeout: 2000000
+
+    sva:
+      use_header_as_prefix: true
+      use_detailed_prompt: false
+      query:
+        model: *action_model
+        temperature: 0.8
+        top_p: 0.95
+        repetition_penalty: 1.1
+        max_tokens: 65536
+        use_system_prompt: true
+        use_chat: true
+        system_prompt: "You are an AI assistant tasked with formal verification of register transfer level (RTL) designs.\nYour job is to generate a SystemVerilog assertion for the design-under-test provided.\n"
+        timeout: 2000000
+        enable_thinking: true
+  
+  verification:
+    path: results/wave2sva-benchmark-v4-kimi-k3-pass-at-32-verification.jsonl
+    max_workers: 64
+    batch_size: 1
+    timeout: 600
+
+
+# verifier
+verifier:
+  host: 127.0.0.1
+  port: 4422
+  max_workers: 128
+  queue_max_size: 1024
+  memory_limit: 10
+  time_limit: 180
+
+# llm server
+llm_kit:
+  server_type: openai_api_vl_chat
+  url: https://api.example.com/v1
+
+

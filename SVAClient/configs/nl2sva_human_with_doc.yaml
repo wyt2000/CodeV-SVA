@@ -1,0 +1,55 @@
+# global 
+random_seed: 0
+use_cache: False
+# generate_only: True
+verify_only: True
+
+# agent 
+agent:
+  problem:
+    path: results/nl2sva_human_deepseek_r1_with_doc_pass_at_k_generation.jsonl
+    num_samples: 32
+    batch_size: -1
+    models:
+      - sva : &action_model ep-20251031003805-f9mrq
+
+  generation:
+    path: results/nl2sva_human_deepseek_r1_with_doc_pass_at_k_generation.jsonl
+    max_workers: 2048
+    batch_size: 1 
+    timeout: 600
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0.8
+        top_p: 0.95
+        max_tokens: 16384
+        # stop: []
+        use_system_prompt: True
+        use_chat: True
+        system_prompt: "You are an AI assistant tasked with formal verification of register transfer level (RTL) designs.\nYour job is to translate a description of an assertion to concrete SystemVerilog Assertion (SVA) implementation.\n"
+        timeout: 600
+  
+  verification:
+    path: results/nl2sva_human_deepseek_r1_with_doc_pass_at_k_verification.jsonl
+    max_workers: 128
+    batch_size: 1
+    timeout: 600
+
+
+# Verifier
+verifier:
+  host: 127.0.0.1
+  port: 4422
+  max_workers: 128
+  queue_max_size: 1024
+  memory_limit: 10
+  time_limit: 180
+
+# LLM server
+llm_kit:
+  server_type: ark_api
+  url: https://ark.cn-beijing.volces.com/api/v3

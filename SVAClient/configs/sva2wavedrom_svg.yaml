@@ -1,0 +1,55 @@
+# global 
+random_seed: 0
+use_cache: False
+verify_only: True
+
+# agent 
+agent:
+  problem:
+    # path: training_datasets/CodeV-SVA-83K-random-5K.jsonl
+    path: training_datasets/CodeV-SVA-83K-random-5K-sva2wavedrom-scale5.jsonl
+    num_samples: 1
+    batch_size: -1
+    models:
+      - sva : &action_model ep-20250925035746-ghz7r
+
+  generation:
+    path: training_datasets/CodeV-SVA-83K-random-5K-sva2wavedrom.jsonl
+    max_workers: 2048
+    batch_size: 1 
+    timeout: 300
+
+    sva:
+      use_header_as_prefix: True
+      use_detailed_prompt: False
+      query:
+        model: *action_model
+        temperature: 0
+        top_p: 1.0
+        max_tokens: 32768
+        # stop: []
+        use_system_prompt: False
+        use_chat: True
+        # system_prompt: "You are an AI assistant tasked with formal verification of register transfer level (RTL) designs.\nYour job is to generate a SystemVerilog assertion for the design-under-test provided.\n"
+        enable_thinking: False
+        timeout: 2000000
+
+  verification:
+    path: training_datasets/CodeV-SVA-83K-random-5K-sva2wavedrom-scale5-diagram-svg.jsonl
+    max_workers: 64
+    batch_size: 1
+    timeout: 600
+
+# Verifier
+verifier:
+  host: 127.0.0.1
+  port: 4422
+  max_workers: 128
+  queue_max_size: 1024
+  memory_limit: 10
+  time_limit: 180
+
+# LLM server
+llm_kit:
+  server_type: ark_api
+  url: https://ark.cn-beijing.volces.com/api/v3
