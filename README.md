@@ -30,13 +30,13 @@ See the README and configuration files inside each component for more detailed u
 
 ## Models
 
-Model weights are distributed separately and are not bundled with this source tree.
-
-| Model | Availability |
-| --- | --- |
-| CodeV-SVA-8B | External model release |
-| CodeV-SVA-no-think-8B | External model release |
-| CodeV-SVA-14B | External model release |
+| Model | Download |
+| -------- | -------- |
+|    CodeV-SVA-8B              |   [🤗HuggingFace](https://huggingface.co/wyt2000/CodeV-SVA-8B)             |
+|    CodeV-SVA-no-think-8B     |   [🤗HuggingFace](https://huggingface.co/wyt2000/CodeV-SVA-no-think-8B)    |
+|    CodeV-SVA-14B             |   [🤗HuggingFace](https://huggingface.co/wyt2000/CodeV-SVA-14B)            |
+|    CodeV-SVA-VL-9B           |   [🤗HuggingFace](https://huggingface.co/wyt2000/CodeV-SVA-VL-9B)          |
+|    CodeV-SVA-VL-27B          |   [🤗HuggingFace](https://huggingface.co/wyt2000/CodeV-SVA-VL-27B)         |
 
 ## Evaluation results
 
